@@ -1,13 +1,23 @@
 import yfinance as yf
 
 
-def fetch_stock_data(ticker, period='1mo'):
-    stock = yf.Ticker(ticker)
-    data = stock.history(period=period)
-    return data
+def fetch_stock_data(ticker, period='1mo', start=None):
+    # Функция отвечает за загрузку данных об акциях за период из yfinance.
+    try:
+        if start is not None:
+            stock = yf.Ticker(ticker)
+            data = stock.history(period=period, start=start)
+        else:
+            stock = yf.Ticker(ticker)
+            data = stock.history(period=period)
+        return data
+    except Exception as e:
+        print(f"Ошибка при получении данных для тикера {ticker}: {e}")
+        return None
 
 
 def add_moving_average(data, window_size=5):
+    # Функция отвечает за  расчёт скользящего среднего цены закрытия акций
     data['Moving_Average'] = data['Close'].rolling(window=window_size).mean()
     return data
 
@@ -22,3 +32,15 @@ def calculate_and_display_average_price(data, ticker):
     end_date = data.index.max().strftime('%Y-%m-%d')
 
     print(f'Средняя цена закрытия акции "{ticker}" за период <{start_date}...{end_date}>: {avr_price_rounded}')
+
+
+def notify_if_strong_fluctuations(data, ticker, threshold=5):
+    # Функция вычисляет максимальное и минимальное значения цены закрытия и сравнивает с заданным порогом
+    # (по умолчанию порог threshold=5). Если разница превышает порог, пользователь получит уведомление.
+    max_closing_price = data['Close'].max()
+    min_closing_price = data['Close'].min()
+    fluctuation = ((max_closing_price - min_closing_price) / min_closing_price) * 100
+    fluctuation_rounded = round(fluctuation, 1)
+    if fluctuation_rounded > threshold:
+        print(
+            f'За указанный период отмечается сильное колебание цены закрытия акций "{ticker}": {fluctuation_rounded}%')
