@@ -10,9 +10,10 @@ def fetch_stock_data(ticker, period='1mo', start=None):
         else:
             stock = yf.Ticker(ticker)
             data = stock.history(period=period)
+        print(data)
         return data
     except Exception as e:
-        print(f"Ошибка при получении данных для тикера {ticker}: {e}")
+        print(f"\nОшибка при получении данных для тикера {ticker}: {e}")
         return None
 
 
@@ -31,7 +32,9 @@ def calculate_and_display_average_price(data, ticker):
     start_date = data.index.min().strftime('%Y-%m-%d')
     end_date = data.index.max().strftime('%Y-%m-%d')
 
-    print(f'Средняя цена закрытия акции "{ticker}" за период <{start_date}...{end_date}>: {avr_price_rounded}')
+    print(
+        f'\nСредняя цена закрытия акции "{ticker}" за период <{start_date}...{end_date}> '
+        f'составила: {avr_price_rounded}')
 
 
 def notify_if_strong_fluctuations(data, ticker, threshold=5):
@@ -44,3 +47,9 @@ def notify_if_strong_fluctuations(data, ticker, threshold=5):
     if fluctuation_rounded > threshold:
         print(
             f'За указанный период отмечается сильное колебание цены закрытия акций "{ticker}": {fluctuation_rounded}%')
+
+
+def export_data_to_csv(data, filename):
+    #  Функция записывает данные в CSV файл
+    data.to_csv(filename)
+    print(f"\nДанные по запросу сохранены в файл {filename}")

@@ -25,6 +25,10 @@ def main():
         # Add moving average to the data
         stock_data = dd.add_moving_average(stock_data)
 
+        # Export data to csv file
+        filename = f'{ticker}_{period}_stock_data.csv'
+        dd.export_data_to_csv(stock_data, filename)
+
         # Plot the data
         dplt.create_and_save_plot(stock_data, ticker, period)
 
