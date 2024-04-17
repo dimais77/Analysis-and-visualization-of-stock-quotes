@@ -48,7 +48,8 @@ def notify_if_strong_fluctuations(data, ticker, threshold=5):
         fluctuation_rounded = round(fluctuation, 1)
         if fluctuation_rounded > threshold:
             print(
-                f'За указанный период отмечается сильное колебание цены закрытия акций "{ticker}": {fluctuation_rounded}%')
+                f'За указанный период отмечается сильное колебание '
+                f'цены закрытия акций "{ticker}": {fluctuation_rounded}%')
     except Exception as e:
         print(f"\nОшибка при определении сильных колебаний: {e}")
 
@@ -59,3 +60,29 @@ def export_data_to_csv(data, filename):
         print(f"\nДанные по запросу сохранены в файл {filename}")
     except Exception as e:
         print(f"\nОшибка при экспорте данных в CSV: {e}")
+
+
+def calculate_rsi(data, window_size=14):
+    try:
+        delta = data['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=window_size).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=window_size).mean()
+        rs = gain / loss
+        rsi = 100 - (100 / (1 + rs))
+        data['RSI'] = rsi
+        return data
+    except Exception as e:
+        print(f"\nОшибка при расчёте RSI: {e}")
+        return None
+
+
+def calculate_macd(data, short_window=12, long_window=26, signal_window=9):
+    try:
+        short_ema = data['Close'].ewm(span=short_window, adjust=False).mean()
+        long_ema = data['Close'].ewm(span=long_window, adjust=False).mean()
+        data['MACD'] = short_ema - long_ema
+        data['Signal_Line'] = data['MACD'].ewm(span=signal_window, adjust=False).mean()
+        return data
+    except Exception as e:
+        print(f"\nОшибка при расчёте MACD: {e}")
+        return None

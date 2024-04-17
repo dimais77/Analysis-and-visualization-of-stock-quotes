@@ -1,34 +1,36 @@
 import matplotlib.pyplot as plt
-import pandas as pd
 
 
 def create_and_save_plot(data, ticker, period, filename=None):
     try:
-        plt.figure(figsize=(10, 6))
+        fig, axs = plt.subplots(3, 1, figsize=(18, 12))
 
-        if 'Date' not in data:
-            if pd.api.types.is_datetime64_any_dtype(data.index):
-                dates = data.index.to_numpy()
-                plt.plot(dates, data['Close'].values, label='Close Price')
-                plt.plot(dates, data['Moving_Average'].values, label='Moving Average')
-            else:
-                print("\nИнформация о дате отсутствует или не имеет распознаваемого формата.")
-                return
-        else:
-            if not pd.api.types.is_datetime64_any_dtype(data['Date']):
-                data['Date'] = pd.to_datetime(data['Date'])
-            plt.plot(data['Date'], data['Close'], label='Close Price')
-            plt.plot(data['Date'], data['Moving_Average'], label='Moving Average')
+        # График цены закрытия и скользящего среднего
+        axs[0].plot(data.index, data['Close'], label='Close Price', color='blue')
+        axs[0].plot(data.index, data['Moving_Average'], label='Moving Average', color='orange')
+        axs[0].set_ylabel('Price')
+        axs[0].set_title(f"{ticker} Stock Price and Moving Average")
 
-        plt.title(f"{ticker} Цена акций с течением времени")
-        plt.xlabel("Дата")
-        plt.ylabel("Цена")
+        # График RSI
+        axs[1].plot(data.index, data['RSI'], label='RSI', color='purple')
+        axs[1].axhline(70, color='r', linestyle='--')
+        axs[1].axhline(30, color='g', linestyle='--')
+        axs[1].set_ylabel('RSI')
+        axs[1].set_title(f"{ticker} Relative Strength Index (RSI)")
+
+        # График MACD
+        axs[2].plot(data.index, data['MACD'], label='MACD', color='blue')
+        axs[2].plot(data.index, data['Signal_Line'], label='Signal Line', color='orange')
+        axs[2].set_ylabel('MACD')
+        axs[2].set_title(f"{ticker} Moving Average Convergence Divergence (MACD)")
+
+        plt.xlabel("Date")
         plt.legend()
 
         if filename is None:
-            filename = f"{ticker}_{period}_stock_price_chart.png"
+            filename = f"{ticker}_{period}_combined_chart.png"
 
         plt.savefig(filename)
-        print(f"График сохранен как {filename}")
+        print(f"Combined chart saved as {filename}")
     except Exception as e:
-        print(f"\nОшибка при создании и сохранении графика: {e}")
+        print(f"\nError creating and saving combined chart: {e}")

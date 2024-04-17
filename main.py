@@ -25,18 +25,21 @@ def main():
         # Add moving average to the data
         stock_data = dd.add_moving_average(stock_data)
 
-        # Export data to csv file
-        filename = f'{ticker}_{period}_stock_data.csv'
-        dd.export_data_to_csv(stock_data, filename)
-
-        # Plot the data
-        dplt.create_and_save_plot(stock_data, ticker, period)
-
         # Displays average closing stock price for the period
         dd.calculate_and_display_average_price(stock_data, ticker)
 
         # Displays notification if fluctuations exceed a specified threshold
         dd.notify_if_strong_fluctuations(stock_data, ticker)  # По умолчанию threshold=5, либо укажите иной %
+
+        # Export data to csv file
+        filename = f'{ticker}_{period}_stock_data.csv'
+        dd.export_data_to_csv(stock_data, filename)
+
+        # Calculate and plot data, moving average, RSI, MACD
+        stock_data_with_indicators = dd.calculate_rsi(stock_data, window_size=5)
+        stock_data_with_indicators = dd.calculate_macd(stock_data_with_indicators, short_window=12, long_window=26,
+                                                       signal_window=9)
+        dplt.create_and_save_plot(stock_data_with_indicators, ticker, period, filename=None)
     else:
         print(
             "Данные об акциях не были получены. Пожалуйста, проверьте введенные данные и повторите попытку.")
