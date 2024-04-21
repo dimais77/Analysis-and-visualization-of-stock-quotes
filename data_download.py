@@ -1,11 +1,26 @@
 import yfinance as yf
+from typing import Optional, Union
+import pandas as pd
 
 
-def fetch_stock_data(ticker, period='1mo', start=None):
+def fetch_stock_data(ticker: str, period: str, start: Optional[str] = None, end: Optional[str] = None) -> Union[
+    pd.DataFrame, None]:
+    """
+    Fetches stock data for a given ticker from Yahoo Finance.
+
+    Parameters:
+        ticker (str): Stock symbol to fetch data for.
+        period (str): Data period.
+        start (str, optional): Start date for the data period.
+        end (str, optional): End date for the data period.
+
+    Returns:
+        pd.DataFrame: Stock data or None if an error occurs.
+    """
     try:
         if start is not None:
             stock = yf.Ticker(ticker)
-            data = stock.history(period=period, start=start)
+            data = stock.history(period=period, start=start, end=end)
         else:
             stock = yf.Ticker(ticker)
             data = stock.history(period=period)
