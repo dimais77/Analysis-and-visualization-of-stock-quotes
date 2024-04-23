@@ -2,8 +2,11 @@ import os
 import matplotlib.pyplot as plt
 
 
-def create_and_save_plot(data, ticker, period, start_date, end_date, filename=None):
+def create_and_save_plot(data, ticker, period, start_date, end_date, style=None, filename=None):
     try:
+        if style:
+            plt.style.use(style)
+
         fig, axs = plt.subplots(3, 1, figsize=(18, 12))
 
         # График цены закрытия и скользящего среднего

@@ -52,7 +52,11 @@ def main():
         stock_data_with_indicators = dd.calculate_rsi(stock_data, window_size=5)
         stock_data_with_indicators = dd.calculate_macd(stock_data_with_indicators, short_window=12, long_window=26,
                                                        signal_window=9)
-        dplt.create_and_save_plot(stock_data_with_indicators, ticker, period, start_date, end_date)
+
+        # Запрос выбора стиля графика
+        style = input("По желанию введите стиль графика (например, 'classic', 'ggplot', 'bmh', 'fivethirtyeight'): ")
+
+        dplt.create_and_save_plot(stock_data_with_indicators, ticker, period, start_date, end_date, style=style)
     else:
         print(
             "Данные об акциях не были получены. Пожалуйста, проверьте введенные данные и повторите попытку.")
