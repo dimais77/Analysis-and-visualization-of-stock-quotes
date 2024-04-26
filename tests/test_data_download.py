@@ -2,7 +2,7 @@ import unittest
 import pandas as pd
 from unittest.mock import patch
 from data_download import fetch_stock_data, add_moving_average, calculate_and_display_average_price, calculate_rsi, \
-    calculate_macd, notify_if_strong_fluctuations, export_data_to_csv
+    calculate_macd, notify_if_strong_fluctuations, export_data_to_csv, calculate_standard_deviation
 import tempfile
 
 
@@ -11,7 +11,7 @@ class TestDataDownload(unittest.TestCase):
     @patch('data_download.yf.Ticker')
     def test_fetch_stock_data(self, mock_ticker):
         mock_ticker.return_value.history.return_value = pd.DataFrame({'Close': [10, 20, 30, 40, 50]})
-        data = fetch_stock_data('AAPL', '1d')
+        data = fetch_stock_data('AAPL', '5d')
         self.assertIsInstance(data, pd.DataFrame)
 
     def test_add_moving_average(self):
@@ -51,6 +51,11 @@ class TestDataDownload(unittest.TestCase):
         data_with_macd = calculate_macd(data)
         self.assertIn('MACD', data_with_macd.columns)
         self.assertIn('Signal_Line', data_with_macd.columns)
+
+    def test_calculate_standard_deviation(self):
+        data = pd.DataFrame({'Close': [10, 20, 15, 25, 30]})
+        std_deviation = calculate_standard_deviation(data)
+        self.assertIsNotNone(std_deviation)
 
 
 if __name__ == '__main__':
