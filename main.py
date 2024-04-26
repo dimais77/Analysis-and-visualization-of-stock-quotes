@@ -41,6 +41,9 @@ def main():
         # Отображение средней цены закрытия акции за указанный период
         dd.calculate_and_display_average_price(stock_data, ticker)
 
+        # Вызов функции для расчета стандартного отклонения
+        std_deviation = dd.calculate_standard_deviation(stock_data)
+
         # Отображение уведомления, если колебания превышают заданный порог
         dd.notify_if_strong_fluctuations(stock_data, ticker)
 
@@ -56,7 +59,8 @@ def main():
         # Запрос выбора стиля графика
         style = input("По желанию введите стиль графика (например, 'classic', 'ggplot', 'bmh', 'fivethirtyeight'): ")
 
-        dplt.create_and_save_plot(stock_data_with_indicators, ticker, period, start_date, end_date, style=style)
+        dplt.create_and_save_plot(stock_data_with_indicators, ticker, period, start_date, end_date, std_deviation,
+                                  style=style)
     else:
         print(
             "Данные об акциях не были получены. Пожалуйста, проверьте введенные данные и повторите попытку.")

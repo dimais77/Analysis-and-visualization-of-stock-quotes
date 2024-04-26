@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def fetch_stock_data(ticker: str, period: str, start: Optional[str] = None, end: Optional[str] = None) -> Union[
-    pd.DataFrame, None]:
+        pd.DataFrame, None]:
     """
     Fetches stock data for a given ticker from Yahoo Finance.
 
@@ -100,4 +100,14 @@ def calculate_macd(data, short_window=12, long_window=26, signal_window=9):
         return data
     except Exception as e:
         print(f"\nОшибка при расчёте MACD: {e}")
+        return None
+
+
+def calculate_standard_deviation(data):
+    try:
+        std_deviation = data['Close'].std(ddof=1)
+        print(f'\nСтандартное отклонение цены закрытия: {std_deviation}')
+        return std_deviation
+    except Exception as e:
+        print(f"\nОшибка при расчете стандартного отклонения: {e}")
         return None
